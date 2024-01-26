@@ -24,9 +24,9 @@ def kpi_accumulated_savings(data_frame, month, year):
         data_frame['Año'] == year
     )].groupby(['Categoria', 'Mes']).sum().reset_index()
     df_prev = general_functions.sort_df_by_month(df_prev)
-    df_prev = df_prev.pivot(index='Mes', columns='Categoria', values=['Cantidad ACT', 'Cantidad TGT', 'ACT - TGT'])
-    df_prev = df_prev[df_prev['Cantidad ACT']['Ingresos']>0][['ACT - TGT']]
-    savings = df_prev[:month]['ACT - TGT'].drop('Inicial', axis=1).sum().sum()
+    df_prev = df_prev.pivot(index='Mes', columns='Categoria', values=['Cantidad ACT', 'Cantidad TGT', 'ACT vs TGT'])
+    df_prev = df_prev[df_prev['Cantidad ACT']['Ingresos']>0][['ACT vs TGT']]
+    savings = df_prev[:month]['ACT vs TGT'].drop('Inicial', axis=1).sum().sum()
 
     fig = go.Figure(go.Indicator(
         mode="number",
@@ -39,11 +39,11 @@ def kpi_accumulated_savings(data_frame, month, year):
 def savings_estimation(data_frame, month, year):
     df_prev = data_frame[
         (data_frame['Mes'] == month) & (data_frame['Año'] == year)
-    ].groupby('Categoria').sum()[["Cantidad ACT", "Cantidad TGT", 'ACT - TGT']].drop(['Inicial'])
+    ].groupby('Categoria').sum()[["Cantidad ACT", "Cantidad TGT", 'ACT vs TGT']].drop(['Inicial'])
     df_prev.reset_index()
     vACT = df_prev.loc['Ingresos']['Cantidad ACT'] + (df_prev['Cantidad ACT'].sum() - df_prev.loc['Ingresos']['Cantidad ACT'])
     vTGT = df_prev.loc['Ingresos']['Cantidad TGT'] + (df_prev['Cantidad TGT'].sum() - df_prev.loc['Ingresos']['Cantidad TGT'])
-    values = df_prev['ACT - TGT'].values.tolist()
+    values = df_prev['ACT vs TGT'].values.tolist()
     values.insert(0, vTGT)
     values.append(vACT)
     categorias = df_prev.index.values.tolist()
@@ -75,7 +75,7 @@ def phasing_savings(data_frame, year):
     df_prev = data_frame[(
         data_frame['Año'] == year
     )].groupby(['Categoria', 'Mes']).sum().drop(['Inicial']).reset_index()
-    df_prev = df_prev.groupby(['Mes']).sum().reset_index()[['Mes', 'Cantidad ACT', 'Cantidad TGT', 'ACT - TGT']]
+    df_prev = df_prev.groupby(['Mes']).sum().reset_index()[['Mes', 'Cantidad ACT', 'Cantidad TGT', 'ACT vs TGT']]
     df_prev = general_functions.sort_df_by_month(df_prev)
     fig = go.Figure()
     fig.add_trace(go.Bar(
@@ -101,9 +101,9 @@ def phasing_final_year_estimation_income(data_frame, year):
         data_frame['Año'] == year
     )].groupby(['Categoria', 'Mes']).sum().reset_index()
     df_prev = general_functions.sort_df_by_month(df_prev)
-    df_prev = df_prev.pivot(index='Mes', columns='Categoria', values=['Cantidad ACT', 'Cantidad TGT', 'ACT - TGT'])
-    df_prev = df_prev[df_prev['Cantidad ACT']['Ingresos']>0][['ACT - TGT']]
-    df_prev = df_prev[:]['ACT - TGT'].drop('Inicial', axis=1)
+    df_prev = df_prev.pivot(index='Mes', columns='Categoria', values=['Cantidad ACT', 'Cantidad TGT', 'ACT vs TGT'])
+    df_prev = df_prev[df_prev['Cantidad ACT']['Ingresos']>0][['ACT vs TGT']]
+    df_prev = df_prev[:]['ACT vs TGT'].drop('Inicial', axis=1)
     savings_per_month = []
     for month in df_prev.index:
         savings_per_month.append(df_prev[:month].sum().sum())

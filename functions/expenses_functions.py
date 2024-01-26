@@ -18,7 +18,7 @@ def kpi_month_expenses(data_frame, month, year):
         value = expenses_act,
         delta = {'reference': expenses_tgt, 'valueformat':'f', "suffix": "€", "font":{"size":20}},
         number = {'valueformat':'f', "suffix": "€", "font":{"size":60, "color":"#0460A9"}},
-        title = f'Gastos ACT de {month} {year}'
+        title = f'ACT Expenses {month} {year}'
     ))
 
     return fig
@@ -38,7 +38,7 @@ def kpi_year_total_expenses(data_frame, year):
         value=total_expenses_act,
         delta={'reference': total_expenses_tgt, 'valueformat':'f', "suffix": "€", "font":{"size":20}},
         number={'valueformat':'f', "suffix": "€", "font":{"size":60, "color":"#0460A9"}},
-        title={"text": f'Gastos totales ACT {year}'}
+        title={"text": f'Total Expenses {year}'}
     ))
     return fig
 
@@ -52,7 +52,7 @@ def phasing_expenses(data_frame, year):
     df_prev['Cantidad ACT'] = abs(df_prev['Cantidad ACT'])
     df_prev['Cantidad TGT'] = abs(df_prev['Cantidad TGT'])
 
-    df_ingresos = data_frame[data_frame['Año'] == year].groupby(['Categoria', 'Mes']).sum().loc['Ingresos'].drop(['Año', 'ACT - TGT', 'Cantidad TGT'], axis=1).reset_index()
+    df_ingresos = data_frame[data_frame['Año'] == year].groupby(['Categoria', 'Mes']).sum().loc['Ingresos'].drop(['Año', 'ACT vs TGT', 'Cantidad TGT'], axis=1).reset_index()
     df_ingresos['Mes'] = pd.Categorical(df_ingresos['Mes'], categories=meses, ordered=True)
     df_ingresos = df_ingresos.sort_values('Mes')
     df_ingresos = df_ingresos[df_ingresos['Cantidad ACT'] > 0]
@@ -78,7 +78,7 @@ def phasing_expenses(data_frame, year):
         marker_color='#9ABFDC'
     ))
     fig.update_layout(
-        title = f"Analisis Mensual de Gastos {year} ",
+        title = f"Expenses Phasing Analysis {year} ",
         showlegend = True
     )
     return fig
@@ -110,7 +110,7 @@ def weight_expenses(data_frame, month, year):
     )
     fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r))
     fig.update_layout(
-        title = f"Peso de Gastos ACT Y TGT en {month} {year} ",
+        title = f"ACT & TGT Expenses Weight {month} {year} ",
         showlegend = True
     )
     return fig
@@ -121,16 +121,16 @@ def expenses_margin(data_frame, month, year):
                 (data_frame['Mes'] == month) & 
                 (data_frame['Año'] == year)
             ].drop(['SubCategoria'], axis=1).groupby('Categoria').sum().drop(['Inicial', 'Ingresos']).reset_index()
-    colors = ["#ffa590" if i < 0 else "#c7ddb5" for i in df_mg['ACT - TGT'].values]
+    colors = ["#ffa590" if i < 0 else "#c7ddb5" for i in df_mg['ACT vs TGT'].values]
     
     fig = go.Figure(go.Bar(
         x=df_mg['Categoria'],
-        y=df_mg['ACT - TGT'],
+        y=df_mg['ACT vs TGT'],
         name="ACT",
         marker_color=colors
     ))
     fig.update_layout(
-        title = f"Margen de gastos {month} {year} ",
+        title = f"Expenses Margin {month} {year} ",
         showlegend = False
     )
     return fig

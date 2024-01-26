@@ -31,7 +31,7 @@ layout = dbc.Container([
                     {"label": "Nov", "value": "Noviembre"},
                     {"label": "Dec", "value": "Diciembre"},
                 ],
-                value=general_functions.last_month_data(df, 2023),
+                value=general_functions.last_month_data(df, general_functions.current_year_data()),
             ),
         ], width=8)
     ]),
@@ -56,13 +56,13 @@ layout = dbc.Container([
         dbc.Col([
             dcc.Graph(
                 id='phasing-savings',
-                figure=savings_functions.phasing_savings(df, 2023)
+                figure=savings_functions.phasing_savings(df, general_functions.current_year_data())
             )
         ], width=6),
         dbc.Col([
             dcc.Graph(
                 id='phasing-final-year-estimation-income',
-                figure=savings_functions.phasing_final_year_estimation_income(df, 2023)
+                figure=savings_functions.phasing_final_year_estimation_income(df, general_functions.current_year_data())
             )
         ], width=6)
     ])
@@ -72,6 +72,6 @@ layout = dbc.Container([
                Output("savings-estimation", 'figure'), Output("kpi-accumulated-savings", 'figure')], 
                Input("month", "value"))
 def expenses_KPI(value):
-    return savings_functions.kpi_month_savings(df, value, 2023), \
-           savings_functions.savings_estimation(df, value, 2023), \
-           savings_functions.kpi_accumulated_savings(df, value, 2023)
+    return savings_functions.kpi_month_savings(df, value, general_functions.current_year_data()), \
+           savings_functions.savings_estimation(df, value, general_functions.current_year_data()), \
+           savings_functions.kpi_accumulated_savings(df, value, general_functions.current_year_data())

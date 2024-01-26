@@ -24,7 +24,7 @@ def kpi_balance_estimation_endyear(data_frame, year):
         data_frame['Año'] == year
     )].groupby(['Categoria', 'Mes']).sum().reset_index()
     df_prev = general_functions.sort_df_by_month(df_prev)
-    df_prev = df_prev.pivot(index='Mes', columns='Categoria', values=['Cantidad ACT', 'Cantidad TGT', 'ACT - TGT'])
+    df_prev = df_prev.pivot(index='Mes', columns='Categoria', values=['Cantidad ACT', 'Cantidad TGT', 'ACT vs TGT'])
     df_prev = df_prev[df_prev['Cantidad ACT']['Ingresos']>0]
     savings = df_prev.tail(1)['Cantidad ACT'].sum().sum() - df_prev.tail(1)['Cantidad TGT'].sum().sum()
 
@@ -51,13 +51,13 @@ def phasing_analysis(data_frame, category, year):
     fig = go.Figure()
     fig.add_trace(go.Bar(
         x=df_prev['Mes'],
-        y=df_prev['Cantidad ACT'],
+        y=df_prev['Cantidad ACT'].round(3),
         name="ACT",
         marker_color='#0460A9'
     ))
     fig.add_trace(go.Scatter(
         x=df_prev['Mes'],
-        y=df_prev['Cantidad TGT'],
+        y=df_prev['Cantidad TGT'].round(3),
         name="TGT",
         marker_color='#9ABFDC'
     ))
@@ -65,6 +65,7 @@ def phasing_analysis(data_frame, category, year):
         title = f"Phasing Analysis {category} {year} ",
         showlegend = True
     )
+    fig.update_yaxes(tickformat = "digits")
     return fig
 
 def month_table(data_frame, month, year):
@@ -72,16 +73,16 @@ def month_table(data_frame, month, year):
         (data_frame['Mes'] == month) & 
         (data_frame['Año'] == year)
     ].drop(['Mes', 'Año', 'Categoria'], axis=1)
-    df_table['color'] = ["#ffa590" if i < 0 else "#c7ddb5" for i in df_table['ACT - TGT']]
-    cols_to_show = ['SubCategoria', 'Cantidad ACT', 'Cantidad TGT', 'ACT - TGT']
+    cols_to_show = ['SubCategoria', 'Cantidad ACT', 'Cantidad TGT', 'Cantidad PY', 'ACT vs TGT', 'ACT vs PY']
     text_color, background_color = [], []
     n = len(df_table)
     for col in cols_to_show:
-        if col != 'ACT - TGT':
+        if not col in ('ACT vs TGT', 'ACT vs PY'):
             background_color.append(["white"] * n)
             text_color.append(["black"] * n)
         else:
-            background_color.append(df_table["color"].to_list())
+            df_table['color'] = ["#ffa590" if i < 0 else "#c7ddb5" for i in df_table[col]]
+            background_color.append(df_table['color'].to_list())
             text_color.append(["white"] * n)
     df_table = df_table.drop(['color'], axis=1)
     
@@ -94,7 +95,7 @@ def month_table(data_frame, month, year):
                 font=dict(color='white', size=12)
             ),
             cells=dict(
-                values = df_table[['SubCategoria', 'Cantidad ACT', 'Cantidad TGT', 'ACT - TGT']].round(3).values.T,
+                values = df_table[['SubCategoria', 'Cantidad ACT', 'Cantidad TGT', 'Cantidad PY', 'ACT vs TGT', 'ACT vs PY']].round(3).values.T,
                 fill_color=background_color,
                 align='right',
                 font=dict(color=text_color, size=12),

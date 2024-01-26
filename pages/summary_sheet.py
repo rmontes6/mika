@@ -40,7 +40,7 @@ layout = dbc.Container([
                     {"label": "Nov", "value": "Noviembre"},
                     {"label": "Dec", "value": "Diciembre"},
                 ],
-                value=general_functions.last_month_data(df, 2023),
+                value=general_functions.last_month_data(df, general_functions.current_year_data()),
             ),
         ], width=8)
     ]),
@@ -53,7 +53,7 @@ layout = dbc.Container([
         dbc.Col([
             dcc.Graph(
                 id='kpi-balance-estimation-endyear',
-                figure=summary_functions.kpi_balance_estimation_endyear(df, 2023)
+                figure=summary_functions.kpi_balance_estimation_endyear(df, general_functions.current_year_data())
             )], width=3),
         dbc.Col([
             dcc.Graph(
@@ -85,10 +85,10 @@ layout = dbc.Container([
                Output("summary-kpi-month-expenses", 'figure'),
                Output("month-table", 'figure')], Input("month", "value"))
 def expenses(value):
-    return summary_functions.kpi_balance(df, value, 2023), \
-           savings_functions.kpi_month_savings(df, value, 2023), \
-           expenses_functions.kpi_month_expenses(df, value, 2023), \
-           summary_functions.month_table(df, value, 2023)
+    return summary_functions.kpi_balance(df, value, general_functions.current_year_data()), \
+           savings_functions.kpi_month_savings(df, value, general_functions.current_year_data()), \
+           expenses_functions.kpi_month_expenses(df, value, general_functions.current_year_data()), \
+           summary_functions.month_table(df, value, general_functions.current_year_data())
 
 
 @main_app.app.callback(Output("phasing-analysis", 'figure'),
@@ -109,5 +109,4 @@ def phasing(*args):
     else:
         button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
-    return summary_functions.phasing_analysis(df, id_lookup[button_id], 2023)
-
+    return summary_functions.phasing_analysis(df, id_lookup[button_id], general_functions.current_year_data())

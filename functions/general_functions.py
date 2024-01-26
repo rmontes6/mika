@@ -1,10 +1,30 @@
 import pandas as pd
 
-def main_df():
-    data = pd.read_excel('data/Detalle_Gastos_Ganancias.xlsx')
-    df = data[['Año', 'Mes', 'SubCategoria', 'Categoria', 'Cantidad ACT', 'Cantidad TGT']].fillna(0)
-    df['ACT - TGT'] = df['Cantidad ACT'] - df['Cantidad TGT']
+def current_year_data():
+    data_excel = pd.ExcelFile('data/Detalle_Gastos_Ganancias.xlsx')
+    data = [pd.read_excel('data/Detalle_Gastos_Ganancias.xlsx', sheet_name=sheet) for sheet in data_excel.sheet_names]
+    for i in range(len(data)):
+        if data[i][(data[i]['Categoria'] == 'Ingresos') & (data[i]['Mes'] == 'Enero')]['Cantidad ACT'].iloc[0] > 0:
+            current_year = int(data_excel.sheet_names[i])
+    return current_year
 
+def previous_year_data():
+    act_year = current_year_data()
+    data_excel = pd.ExcelFile('data/Detalle_Gastos_Ganancias.xlsx')
+    if act_year == int(data_excel.sheet_names[0]):
+        previous_year_data = None
+    else:
+        previous_year_data = act_year- 1
+    return previous_year_data
+
+def main_df():
+    years = [previous_year_data(), current_year_data()]
+    data = [pd.read_excel('data/Detalle_Gastos_Ganancias.xlsx', sheet_name=str(sheet)) for sheet in years if sheet]
+    for i in range(len(data)):
+        data[i] = data[i][['Año', 'Mes', 'SubCategoria', 'Categoria', 'Cantidad ACT', 'Cantidad TGT', 'Cantidad PY']].fillna(0)
+        data[i]['ACT vs TGT'] = data[i]['Cantidad ACT'] - data[i]['Cantidad TGT']
+        data[i]['ACT vs PY'] = data[i]['Cantidad ACT'] - data[i]['Cantidad PY']
+    df = pd.concat(data, ignore_index=True)
     return df
 
 def last_month_data(data_frame, year):
