@@ -106,7 +106,7 @@ def phasing_final_year_estimation_income(data_frame, year):
     df_prev = df_prev[:]['ACT vs TGT']
     savings_per_month = []
     for month in df_prev.index:
-        savings_per_month.append(df_prev[:month].sum().sum())
+        savings_per_month.append(df_prev.loc[[month]].sum().sum())
 
     df_prev = data_frame[(
         (data_frame['Año'] == year) & (data_frame['Mes'] == 'Diciembre')
