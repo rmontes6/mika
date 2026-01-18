@@ -18,14 +18,16 @@ def previous_year_data():
     return previous_year_data
 
 def main_df():
-    years = [previous_year_data(), current_year_data()]
-    data = [pd.read_excel('data/Detalle_Gastos_Ganancias.xlsx', sheet_name=str(sheet)) for sheet in years if sheet]
-    for i in range(len(data)):
-        data[i] = data[i][['Año', 'Mes', 'SubCategoria', 'Categoria', 'Cantidad ACT', 'Cantidad TGT', 'Cantidad PY']].fillna(0)
-        data[i]['ACT vs TGT'] = data[i]['Cantidad ACT'] - data[i]['Cantidad TGT']
-        data[i]['ACT vs PY'] = data[i]['Cantidad ACT'] - data[i]['Cantidad PY']
-    df = pd.concat(data, ignore_index=True)
-    return df
+    # years = [previous_year_data(), current_year_data()]
+    years = []
+    data = pd.read_excel('data/Detalle_Gastos_Ganancias.xlsx', sheet_name='Summary')
+    # for i in range(len(data)):
+    data = data[['Año', 'Mes', 'Categoria', 'Cantidad ACT', 'Cantidad TGT']].fillna(0)
+    # data[i] = data[i][['Año', 'Mes', 'SubCategoria', 'Categoria', 'Cantidad ACT', 'Cantidad TGT', 'Cantidad PY']].fillna(0)
+    data['ACT vs TGT'] = data['Cantidad ACT'] - data['Cantidad TGT']
+    # data[i]['ACT vs PY'] = data[i]['Cantidad ACT'] - data[i]['Cantidad PY'] 
+    # df = pd.concat(data, ignore_index=True)
+    return data
 
 def last_month_data(data_frame, year):
     meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']

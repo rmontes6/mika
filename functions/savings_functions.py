@@ -103,7 +103,7 @@ def phasing_final_year_estimation_income(data_frame, year):
     df_prev = general_functions.sort_df_by_month(df_prev)
     df_prev = df_prev.pivot(index='Mes', columns='Categoria', values=['Cantidad ACT', 'Cantidad TGT', 'ACT vs TGT'])
     df_prev = df_prev[df_prev['Cantidad ACT']['Ingresos']>0][['ACT vs TGT']]
-    df_prev = df_prev[:]['ACT vs TGT']
+    df_prev = df_prev['ACT vs TGT']
     savings_per_month = []
     for month in df_prev.index:
         savings_per_month.append(df_prev.loc[[month]].sum().sum())

@@ -14,7 +14,7 @@ layout = dbc.Container([
             dbc.DropdownMenu(
                 id="category",
                 label="Categoria", 
-                children=[dbc.DropdownMenuItem(i, id=f"{i[0].lower() + i[1:]}") for i in df.groupby('Categoria').sum().reset_index()['Categoria']], 
+                children=[dbc.DropdownMenuItem(i, id=f"{str(i)[0].lower() + str(i)[1:]}") for i in df.groupby('Categoria').sum().reset_index()['Categoria']], 
                 direction="down",
                 color = 'white',
             )], width=2),
@@ -40,7 +40,7 @@ layout = dbc.Container([
                     {"label": "Nov", "value": "Noviembre"},
                     {"label": "Dec", "value": "Diciembre"},
                 ],
-                value=general_functions.last_month_data(df, general_functions.current_year_data()),
+                value=general_functions.last_month_data(df, 2026),
             ),
         ], width=8)
     ]),
@@ -53,7 +53,7 @@ layout = dbc.Container([
         dbc.Col([
             dcc.Graph(
                 id='kpi-balance-estimation-endyear',
-                figure=summary_functions.kpi_balance_estimation_endyear(df, general_functions.current_year_data())
+                figure=summary_functions.kpi_balance_estimation_endyear(df, 2026)
             )], width=3),
         dbc.Col([
             dcc.Graph(
@@ -85,18 +85,18 @@ layout = dbc.Container([
                Output("summary-kpi-month-expenses", 'figure'),
                Output("month-table", 'figure')], Input("month", "value"))
 def expenses(value):
-    return summary_functions.kpi_balance(df, value, general_functions.current_year_data()), \
-           savings_functions.kpi_month_savings(df, value, general_functions.current_year_data()), \
-           expenses_functions.kpi_month_expenses(df, value, general_functions.current_year_data()), \
-           summary_functions.month_table(df, value, general_functions.current_year_data())
+    return summary_functions.kpi_balance(df, value, 2026), \
+           savings_functions.kpi_month_savings(df, value, 2026), \
+           expenses_functions.kpi_month_expenses(df, value, 2026), \
+           summary_functions.month_table(df, value, 2026)
 
 
 @main_app.app.callback(Output("phasing-analysis", 'figure'),
-                       [Input(f"{i[0].lower() + i[1:]}", "n_clicks") for i in df.groupby('Categoria').sum().reset_index()['Categoria']],
+                       [Input(f"{str(i)[0].lower() + str(i)[1:]}", "n_clicks") for i in df.groupby('Categoria').sum().reset_index()['Categoria']],
                        prevent_initial_update=True)
 def phasing(*args):
     id_lookup = {}
-    categories = [i[0].lower() + i[1:] for i in df.groupby('Categoria').sum().reset_index()['Categoria']]
+    categories = [str(i)[0].lower() + str(i)[1:] for i in df.groupby('Categoria').sum().reset_index()['Categoria']]
     values = [i[0].capitalize() + i[1:] for i in categories]
     j = 0
     for i in categories:
@@ -109,4 +109,4 @@ def phasing(*args):
     else:
         button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
-    return summary_functions.phasing_analysis(df, id_lookup[button_id], general_functions.current_year_data())
+    return summary_functions.phasing_analysis(df, id_lookup[button_id], 2026)

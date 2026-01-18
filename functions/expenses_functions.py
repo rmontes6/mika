@@ -120,7 +120,7 @@ def expenses_margin(data_frame, month, year):
     df_mg = data_frame[
                 (data_frame['Mes'] == month) & 
                 (data_frame['Año'] == year)
-            ].drop(['SubCategoria'], axis=1).groupby('Categoria').sum().drop(['Inicial', 'Ingresos']).reset_index()
+            ].groupby('Categoria').sum().drop(['Inicial', 'Ingresos']).reset_index()
     colors = ["#ffa590" if i < 0 else "#c7ddb5" for i in df_mg['ACT vs TGT'].values]
     
     fig = go.Figure(go.Bar(

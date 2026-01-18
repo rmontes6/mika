@@ -32,7 +32,8 @@ layout = dbc.Container([
                     {"label": "Nov", "value": "Noviembre"},
                     {"label": "Dec", "value": "Diciembre"},
                 ],
-                value=general_functions.last_month_data(df, general_functions.current_year_data()),
+                # value=general_functions.last_month_data(df, general_functions.current_year_data()),
+                value=general_functions.last_month_data(df, 2026)
             ),
         ], width=8)
     ]),
@@ -45,7 +46,7 @@ layout = dbc.Container([
         dbc.Col([
             dcc.Graph(
                 id='kpi-year-total-expenses',
-                figure=expenses_functions.kpi_year_total_expenses(df, general_functions.current_year_data())
+                figure=expenses_functions.kpi_year_total_expenses(df, 2026)
             )], width=3),
         dbc.Col([
             dcc.Graph(
@@ -57,12 +58,12 @@ layout = dbc.Container([
         dbc.Col([
             dcc.Graph(
                 id='phasing-expenses',
-                figure=expenses_functions.phasing_expenses(df, general_functions.current_year_data())
+                figure=expenses_functions.phasing_expenses(df, 2026)
             )], width=6),
         dbc.Col([
             dcc.Graph(
                 id='weight-expenses',
-                figure=expenses_functions.weight_expenses(df, 'Mayo', general_functions.current_year_data())
+                figure={}
             )], width=6)
     ])   
 ],fluid=True)
@@ -71,6 +72,6 @@ layout = dbc.Container([
                Output("expenses-margin", 'figure'),
                Output("weight-expenses", 'figure')], Input("month", "value"))
 def expenses(value):
-    return expenses_functions.kpi_month_expenses(df, value, general_functions.current_year_data()), \
-           expenses_functions.expenses_margin(df, value, general_functions.current_year_data()), \
-           expenses_functions.weight_expenses(df, value, general_functions.current_year_data())
+    return expenses_functions.kpi_month_expenses(df, value, 2026), \
+           expenses_functions.expenses_margin(df, value, 2026), \
+           expenses_functions.weight_expenses(df, value, 2026)

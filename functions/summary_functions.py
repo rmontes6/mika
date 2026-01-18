@@ -72,12 +72,13 @@ def month_table(data_frame, month, year):
     df_table = data_frame[
         (data_frame['Mes'] == month) & 
         (data_frame['Año'] == year)
-    ].drop(['Mes', 'Año', 'Categoria'], axis=1)
-    cols_to_show = ['SubCategoria', 'Cantidad ACT', 'Cantidad TGT', 'Cantidad PY', 'ACT vs TGT', 'ACT vs PY']
+    ].drop(['Mes', 'Año'], axis=1)
+    cols_to_show = ['Categoria', 'Cantidad ACT', 'Cantidad TGT', 'ACT vs TGT']
+    # cols_to_show = ['Cantidad ACT', 'Cantidad TGT', 'Cantidad PY', 'ACT vs TGT', 'ACT vs PY']
     text_color, background_color = [], []
     n = len(df_table)
     for col in cols_to_show:
-        if not col in ('ACT vs TGT', 'ACT vs PY'):
+        if not col in ('ACT vs TGT'):
             background_color.append(["white"] * n)
             text_color.append(["black"] * n)
         else:
@@ -95,7 +96,8 @@ def month_table(data_frame, month, year):
                 font=dict(color='white', size=12)
             ),
             cells=dict(
-                values = df_table[['SubCategoria', 'Cantidad ACT', 'Cantidad TGT', 'Cantidad PY', 'ACT vs TGT', 'ACT vs PY']].round(3).values.T,
+                values = df_table[['Categoria', 'Cantidad ACT', 'Cantidad TGT', 'ACT vs TGT']].round(3).values.T,
+                # values = df_table[['Cantidad ACT', 'Cantidad TGT', 'Cantidad PY', 'ACT vs TGT', 'ACT vs PY']].round(3).values.T,
                 fill_color=background_color,
                 align='right',
                 font=dict(color=text_color, size=12),
